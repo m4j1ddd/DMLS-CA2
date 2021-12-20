@@ -28,7 +28,7 @@ if __name__ == "__main__":
     """
     spark = SparkSession\
         .builder\
-        .appName("PythonPi-Dousti")\
+        .appName("PythonPi-Abdollahi")\
         .getOrCreate()
 
     partitions = int(sys.argv[1]) if len(sys.argv) > 1 else 2
