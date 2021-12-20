@@ -1,11 +1,7 @@
-import sys
-from typing import Tuple
-
-from pyspark.rdd import RDD
-from pyspark.sql import SparkSession
-
-from array import array
+import random
 import time
+
+from pyspark.sql import SparkSession
 
 def execute_merge_sort(generated_list):
     start_time = time.time()
@@ -14,6 +10,11 @@ def execute_merge_sort(generated_list):
     print('Simple merge sort: %f sec' % elapsed)
     return sorted_list
 
+
+def generate_list(length):
+    N = length
+    generated_list = [random.random() for num in range(N)]
+    return generated_list
 
 def merging(left_side, right_side):
     result = []
@@ -46,32 +47,17 @@ def is_sorted(num_array):
             return False
     return True
 
-
 if __name__ == "__main__":
-
     spark = SparkSession \
         .builder \
         .appName("PythonSort-Abdollahi") \
         .getOrCreate()
 
-    try:
-        f = open("/home/shared_files/CA1/to_sort.txt", 'r')
-    except OSError:
-        try:
-            f = open("to_sort.txt", 'r')
-        except OSError:
-            print("Could not read file")
-            sys.exit()
-    arr = array('I', [0]) * 2000000
-    count = 0
-    for each in f:
-        arr[count] = int(each)
-        count += 1
-    f.close()
+    generated_list = list(generate_list(500000))
+
+    sorted_list = execute_merge_sort(generated_list)
 
     sc = spark.sparkContext
 
-    rdd = sc.parallelize(arr).mapPartitions(execute_merge_sort).collect()
-    print(rdd)
-
-    spark.stop()
+    # rdd = sc.parallelize(generate_list).mapPartitions(execute_merge_sort).collect()
+    sc.parallelize(generated_list).flatMap(lambda x: x).glom().mapPartitions(execute_merge_sort).collect()
