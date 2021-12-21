@@ -1,3 +1,4 @@
+import sys
 import time
 import random
 
@@ -49,6 +50,17 @@ def generate_list(length):
 
 
 if __name__ == '__main__':
-    generated_list = generate_list(500000)
-    sorted_list = execute_merge_sort(generated_list)
-    print(len(sorted_list))
+    # generated_list = generate_list(500000)
+    # sorted_list = execute_merge_sort(generated_list)
+    # print(len(sorted_list))
+    try:
+        f = open("/home/shared_files/CA2/wiki_corpus", 'r')
+    except OSError:
+        try:
+            f = open("wiki_corpus", 'r')
+        except OSError:
+            print("Could not read file")
+            sys.exit()
+    lines = f.read().splitlines()
+    f.close()
+    print(lines)
