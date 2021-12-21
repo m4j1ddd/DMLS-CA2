@@ -95,8 +95,10 @@ if __name__ == "__main__":
         .builder \
         .appName("PythonSort-Abdollahi") \
         .getOrCreate()
-    # sorted_arr = spark.sparkContext.parallelize(arr[:10]).reduce(merge)
-    output = spark.sparkContext.parallelize(arr).map(lambda x: (x, 1)).sortByKey().collect()
+    partitions = int(sys.argv[1]) if len(sys.argv) > 1 else 4
+    rdd = spark.sparkContext.parallelize(arr, partitions).map(lambda x: (x, 1)).sortByKey()
+    print("Number of partitions: " + str(rdd.getNumPartitions()))
+    output = rdd.collect()
     sorted_arr = []
     for (num, unitcount) in output:
         sorted_arr.append(num)
