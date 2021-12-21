@@ -1,7 +1,10 @@
 import random
+import sys
 import time
+from array import array
 
 from pyspark.sql import SparkSession
+
 
 def execute_merge_sort(generated_list):
     start_time = time.time()
@@ -15,6 +18,7 @@ def generate_list(length):
     N = length
     generated_list = [random.random() for num in range(N)]
     return generated_list
+
 
 def merging(left_side, right_side):
     result = []
@@ -34,6 +38,7 @@ def merging(left_side, right_side):
 
 
 def merge_sort(generated_list):
+    print(generated_list)
     if len(generated_list) <= 1:
         return generated_list
     middle_value = len(generated_list) // 2
@@ -47,17 +52,54 @@ def is_sorted(num_array):
             return False
     return True
 
+
+def merge(x, y):
+    if isinstance(x, list):
+        left_side = x
+    else:
+        left_side = [x]
+
+    if isinstance(y, list):
+        right_side = y
+    else:
+        right_side = [y]
+
+    return merging(left_side, right_side)
+
+
+def print_in_file(arr, file_name):
+    f = open(file_name, 'w+')
+    for i in range(len(arr)):
+        f.write(str(arr[i]))
+        f.write('\n')
+    f.close()
+
+
 if __name__ == "__main__":
+    try:
+        f = open("/home/shared_files/CA1/to_sort.txt", 'r')
+    except OSError:
+        try:
+            f = open("to_sort.txt", 'r')
+        except OSError:
+            print("Could not read file")
+            sys.exit()
+    arr = array('I', [0]) * 2000000
+    count = 0
+    for each in f:
+        arr[count] = int(each)
+        count += 1
+    f.close()
+
     spark = SparkSession \
         .builder \
         .appName("PythonSort-Abdollahi") \
         .getOrCreate()
+    # sorted_arr = spark.sparkContext.parallelize(arr[:10]).reduce(merge)
+    output = spark.sparkContext.parallelize(arr).map(lambda x: (x, 1)).sortByKey().collect()
+    sorted_arr = []
+    for (num, unitcount) in output:
+        sorted_arr.append(num)
+    spark.stop()
 
-    generated_list = list(generate_list(500000))
-
-    sorted_list = execute_merge_sort(generated_list)
-
-    sc = spark.sparkContext
-
-    # rdd = sc.parallelize(generate_list).mapPartitions(execute_merge_sort).collect()
-    sc.parallelize(generated_list).flatMap(lambda x: x).glom().mapPartitions(execute_merge_sort).collect()
+    print_in_file(sorted_arr, "sorted.txt")
