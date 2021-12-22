@@ -2,7 +2,6 @@ import sys
 
 from pyspark.ml.feature import Word2Vec
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import format_number as fmt
 
 if __name__ == "__main__":
     try:
@@ -32,7 +31,6 @@ if __name__ == "__main__":
     model = word2vec.fit(df)
 
     model.getVectors().show()
-    model.findSynonyms("could", 2).select("word", fmt("similarity", 5).alias("similarity")).show()
     # hdfs://raspberrypi-dml0:9000/abdollahi/
     model.save('hdfs://raspberrypi-dml0:9000/abdollahi/Word2Vec.Model')
     spark.stop()
