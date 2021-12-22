@@ -1,6 +1,6 @@
 import sys
 
-from pyspark.ml.feature import Word2Vec
+from pyspark.ml.feature import Word2Vec, Word2VecModel
 from pyspark.sql import SparkSession
 
 import findspark
@@ -13,8 +13,8 @@ if __name__ == "__main__":
         .getOrCreate()
     partitions = int(sys.argv[1]) if len(sys.argv) > 1 else 4
 
-    # word2vec = Word2Vec(vectorSize=3, minCount=0, inputCol="text", outputCol="feature", numPartitions=partitions)
-    model = Word2Vec.load('Word2Vec.Model')
+    # hdfs://raspberrypi-dml0:9000/abdollahi/
+    model = Word2VecModel.load('Word2Vec.Model')
     model.getVectors().show()
 
     spark.stop()
