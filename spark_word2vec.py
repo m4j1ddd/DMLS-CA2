@@ -22,7 +22,6 @@ if __name__ == "__main__":
         .appName("Word2Vec-Abdollahi") \
         .getOrCreate()
 
-    # df = spark.read.load("wiki_corpus", format="csv", sep=" ", inferSchema="true")
     df_lines = []
     for line in lines:
         df_lines.append((line.split(" "),))
