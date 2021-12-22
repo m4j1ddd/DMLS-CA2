@@ -24,13 +24,13 @@ if __name__ == "__main__":
     df_lines = []
     for line in lines:
         df_lines.append((line.split(" "),))
-    df = spark.createDataFrame(df_lines, ["text"])
+    df = spark.createDataFrame(df_lines, ["line"])
     df.show(8)
 
-    word2vec = Word2Vec(vectorSize=3, minCount=0, inputCol="text", outputCol="feature", numPartitions=partitions)
+    word2vec = Word2Vec(vectorSize=5, seed=42, inputCol="line", outputCol="feature", numPartitions=partitions)
     model = word2vec.fit(df)
 
     model.getVectors().show()
     # hdfs://raspberrypi-dml0:9000/abdollahi/
-    model.save('hdfs://raspberrypi-dml0:9000/abdollahi/Word2Vec.Model')
+    model.write().overwrite().save('Word2Vec.Model')
     spark.stop()
