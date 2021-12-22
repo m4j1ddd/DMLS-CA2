@@ -21,12 +21,12 @@ if __name__ == "__main__":
         .getOrCreate()
 
     df_lines = []
-    for line in lines[:5]:
+    for line in lines:
         df_lines.append((line.split(" "),))
     documentDF = spark.createDataFrame(df_lines, ["text"])
-
-    word2Vec = Word2Vec(vectorSize=3, minCount=0, inputCol="text", outputCol="result")
+    partitions = int(sys.argv[1]) if len(sys.argv) > 1 else 4
+    word2Vec = Word2Vec(vectorSize=3, minCount=0, numPartitions=partitions, inputCol="text", outputCol="result")
     model = word2Vec.fit(documentDF)
     model.getVectors().show()
-    word2Vec.save()
+    word2Vec.save("hdfs://raspberrypi-dml0:9000/abdollahi/word2vec")
     spark.stop()
