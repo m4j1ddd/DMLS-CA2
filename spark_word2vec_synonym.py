@@ -17,7 +17,7 @@ if __name__ == "__main__":
 
     spark = SparkSession \
         .builder \
-        .appName("Word2Vec-Abdollahi") \
+        .appName("Word2VecSynonym-Abdollahi") \
         .getOrCreate()
 
     df_lines = []
