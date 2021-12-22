@@ -1,16 +1,10 @@
 import sys
 
+from pyspark.ml import PipelineModel
 from pyspark.ml.feature import Word2VecModel
 from pyspark.sql import SparkSession
 
 from pyspark.sql.functions import format_number as fmt
-
-def print_similar(word, model):
-    synonyms = model.findSynonymsArray(word, 10)
-    print(word + " is similar to: ")
-    for synonym in synonyms:
-        print(synonym[0])
-
 
 if __name__ == "__main__":
     spark = SparkSession \
@@ -20,13 +14,12 @@ if __name__ == "__main__":
 
     # hdfs://raspberrypi-dml0:9000/abdollahi/
     model = Word2VecModel.load('Word2Vec.Model')
+    # model = pipelined_model.stages[1]
     model.getVectors().show()
 
-    print_similar("iran", model)
-    print_similar("tehran", model)
-    print_similar("learning", model)
-    print_similar("science", model)
-
-    # model.findSynonyms("could", 2).select("word", fmt("similarity", 5).alias("similarity")).show()
+    model.findSynonyms("iran", 10).select("word", (1 - fmt("similarity", 5)).alias("distance")).show()
+    model.findSynonyms("tehran", 10).select("word", (1 - fmt("similarity", 5)).alias("distance")).show()
+    model.findSynonyms("learning", 10).select("word", (1 - fmt("similarity", 5)).alias("distance")).show()
+    model.findSynonyms("science", 10).select("word", (1 - fmt("similarity", 5)).alias("distance")).show()
 
     spark.stop()
