@@ -36,9 +36,9 @@ model.save('hdfs://raspberrypi-dml0:9000/abdollahi/Word2Vec.Model')
 
 #result.show(8)
 
-#w2v = model.stages[1]
-#w2v.getVectors().show()
+w2v = model.stages[1]
+w2v.getVectors().show()
 
-#w2v.findSynonyms("could", 2).select("word", fmt("similarity", 5).alias("similarity")).show()
+w2v.findSynonyms("could", 2).select("word", fmt("similarity", 5).alias("similarity")).show()
 
 spark.stop()

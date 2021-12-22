@@ -1,9 +1,8 @@
 import sys
 
-from pyspark.ml import Pipeline
-from pyspark.ml.feature import Tokenizer
 from pyspark.ml.feature import Word2Vec
 from pyspark.sql import SparkSession
+from pyspark.sql.functions import format_number as fmt
 
 if __name__ == "__main__":
     try:
@@ -21,14 +20,19 @@ if __name__ == "__main__":
         .builder \
         .appName("Word2Vec-Abdollahi") \
         .getOrCreate()
+    partitions = int(sys.argv[1]) if len(sys.argv) > 1 else 4
 
     df_lines = []
     for line in lines:
         df_lines.append((line.split(" "),))
     df = spark.createDataFrame(df_lines, ["text"])
     df.show(8)
-    word2vec = Word2Vec(vectorSize=3, minCount=0, inputCol="text", outputCol="feature")
+
+    word2vec = Word2Vec(vectorSize=3, minCount=0, inputCol="text", outputCol="feature", numPartitions=partitions)
     model = word2vec.fit(df)
+
+    model.getVectors().show()
+    model.findSynonyms("could", 2).select("word", fmt("similarity", 5).alias("similarity")).show()
     # hdfs://raspberrypi-dml0:9000/abdollahi/
-    model.save('Word2Vec.Model')
+    model.save('hdfs://raspberrypi-dml0:9000/abdollahi/Word2Vec.Model')
     spark.stop()
