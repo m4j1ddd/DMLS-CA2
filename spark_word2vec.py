@@ -22,18 +22,29 @@ if __name__ == "__main__":
     partitions = int(sys.argv[1]) if len(sys.argv) > 1 else 4
 
     df_lines = []
-    sent = []
     for i in range(len(lines)):
-        line = lines[i].split()
-        sent.extend(line)
-        if ((i+1) % 50000 == 0) or (i == len(lines) - 1):
-            df_lines.append((sent,))
+        window = 2
+        if (i + window) <= len(lines):
             sent = []
+            for j in range(window):
+                sent.extend(lines[i+j].split())
+            df_lines.append((sent,))
+    # df_lines = []
+    # sent = []
+    # c = 0
+    # for line in lines:
+    #     if c < 2:
+    #         sent.extend(line.split())
+    #         c = c + 1
+    #     else:
+    #         df_lines.append((sent,))
+    #         sent = []
+    #         c = 0
 
     df = spark.createDataFrame(df_lines, ["sent"])
     df.show(8)
 
-    word2vec = Word2Vec(vectorSize=5, seed=42, inputCol="sent", outputCol="feature", numPartitions=partitions)
+    word2vec = Word2Vec(vectorSize=40, inputCol="sent", outputCol="feature", numPartitions=partitions)
     model = word2vec.fit(df)
 
     model.getVectors().show()
