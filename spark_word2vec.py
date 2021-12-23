@@ -17,16 +17,19 @@ if __name__ == "__main__":
         .appName("Word2Vec-Abdollahi") \
         .getOrCreate()
 
-    df = spark.read.load("wiki_corpus", format="csv", inferSchema="true")
-    df.show(8)
+    # df = spark.read.load("wiki_corpus", format="csv", inferSchema="true")
+    # df.show(8)
+    #
+    # tokenizer = Tokenizer(inputCol="_c0", outputCol="word")
+    data = spark.sparkContext.textFile('wiki_corpus').map(lambda line: line.split(' ')).map(lambda arr: (arr,))
+    df = spark.createDataFrame(data, ["text"])
+    word2vec = Word2Vec(inputCol="text", outputCol="feature")
+    model = word2vec.fit(df)
+    # pipeline = Pipeline(stages=[tokenizer, word2Vec])
 
-    tokenizer = Tokenizer(inputCol="_c0", outputCol="word")
-    word2Vec = Word2Vec(inputCol="word", outputCol="feature")
-    pipeline = Pipeline(stages=[tokenizer, word2Vec])
-
-    model = pipeline.fit(df)
-    my_word2vec = model.stages[1]
-    my_word2vec.getVectors().show()
+    # model = pipeline.fit(df)
+    # my_word2vec = model.stages[1]
+    # my_word2vec.getVectors().show()
 
     # hdfs://raspberrypi-dml0:9000/abdollahi/
     model.write().overwrite().save('Word2Vec.Model')
