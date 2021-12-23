@@ -13,12 +13,13 @@ if __name__ == "__main__":
         .getOrCreate()
 
     # hdfs://raspberrypi-dml0:9000/abdollahi/
-    model = Word2VecModel.load('LocalWord2Vec.Model')
+    p_model = PipelineModel.load('Word2Vec.Model')
+    model = p_model.stages[1]
     model.getVectors().show()
 
-    model.findSynonyms("iran", 10).select("word", (1 - fmt("similarity", 40)).alias("distance")).show()
-    model.findSynonyms("tehran", 10).select("word", (1 - fmt("similarity", 40)).alias("distance")).show()
-    model.findSynonyms("learning", 10).select("word", (1 - fmt("similarity", 40)).alias("distance")).show()
-    model.findSynonyms("science", 10).select("word", (1 - fmt("similarity", 40)).alias("distance")).show()
-
+    model.findSynonyms("iran", 10).select("word", (1 - fmt("similarity", 100)).alias("distance")).show()
+    model.findSynonyms("tehran", 10).select("word", (1 - fmt("similarity", 100)).alias("distance")).show()
+    model.findSynonyms("learning", 10).select("word", (1 - fmt("similarity", 100)).alias("distance")).show()
+    model.findSynonyms("science", 10).select("word", (1 - fmt("similarity", 100)).alias("distance")).show()
+    
     spark.stop()
