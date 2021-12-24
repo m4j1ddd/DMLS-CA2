@@ -14,7 +14,7 @@ def print_in_file(arr, file_name):
 
 if __name__ == "__main__":
     try:
-        f = open("/home/shared_files/CA1/to_sort.txt", 'r')
+        f = open("/home/shared_files/CA2/to_sort.txt", 'r')
     except OSError:
         try:
             f = open("to_sort.txt", 'r')
