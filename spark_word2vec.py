@@ -26,7 +26,7 @@ if __name__ == "__main__":
     df = spark.createDataFrame(data, ["text"])
     df.show(10)
 
-    word2vec = Word2Vec(numPartitions=partitions, inputCol="text", outputCol="result")
+    word2vec = Word2Vec(vectorSize=16, numPartitions=partitions, inputCol="text", outputCol="result")
     model = word2vec.fit(df)
     model.getVectors().show()
 

@@ -1,3 +1,7 @@
+import math
+from numpy import dot
+from numpy.linalg import norm
+
 from pyspark.ml.feature import Word2Vec, Word2VecModel
 from pyspark.sql import SparkSession
 
@@ -34,4 +38,8 @@ if __name__ == "__main__":
     print("king - man + woman = " + str(v_left))
     print("length of sample vector: " + str(len(v_left)))
 
+    List1 = v_queen
+    List2 = v_left
+    result = dot(List1, List2) / (norm(List1) * norm(List2))
+    print("Similarity of These Two Vector: " + str(result))
     spark.stop()
