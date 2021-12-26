@@ -14,7 +14,7 @@ if __name__ == "__main__":
         .getOrCreate()
 
     # hdfs://raspberrypi-dml0:9000/abdollahi/
-    model = Word2VecModel.load('hdfs://raspberrypi-dml0:9000/abdollahi/Word2Vec.Model')
+    model = Word2VecModel.load('hdfs://raspberrypi-dml0:9000/abdollahi/word2vec.model')
     print("iran synonyms: ")
     model.findSynonyms("iran", 10).select("word", (1 - fmt("similarity", 5)).alias("distance")).show()
     print("tehran synonyms: ")

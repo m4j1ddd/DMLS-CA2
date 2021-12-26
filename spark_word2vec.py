@@ -31,6 +31,6 @@ if __name__ == "__main__":
     model.getVectors().show()
 
     # hdfs://raspberrypi-dml0:9000/abdollahi/
-    model.write().overwrite().save('hdfs://raspberrypi-dml0:9000/abdollahi/Word2Vec.Model')
+    model.write().overwrite().save('hdfs://raspberrypi-dml0:9000/abdollahi/word2vec.model')
 
     spark.stop()
